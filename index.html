@@ -1,1 +1,594 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>母子鱷魚門市新人教學</title></head><body><h1>母子鱷魚門市新人教學</h1><p>網站設定中。</p></body></html>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>母子鱷魚｜門市新人教學中心</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+ --pink:#C9938A;--soft-pink:#E8C4BC;--light-pink:#F5E6E3;
+ --blue:#7A9BAD;--soft-blue:#B8CFDA;--light-blue:#E3EDF3;
+ --sage:#9AAE9B;--light-sage:#E8F0E8;--cream:#FAF3EE;--bg:#FAFAF8;
+ --dark:#37352F;--medium:#5A5248;--gray:#9B9A97;--white:#fff;--line:#E8E2DB;
+ --shadow:0 10px 34px rgba(72,61,48,.08)
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--dark);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{position:sticky;top:0;z-index:20;background:rgba(250,250,248,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.top{max-width:1280px;margin:auto;padding:13px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:11px}.logo{width:48px;height:48px;border-radius:16px;background:var(--light-sage);display:grid;place-items:center;font-size:28px}
+.brand h1{margin:0;font-size:18px}.brand p{margin:3px 0 0;color:var(--gray);font-size:12px}
+.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.role{font-size:12px;font-weight:700;padding:7px 10px;border-radius:999px;background:var(--cream);color:var(--medium)}
+.role.admin{background:var(--light-sage);color:#59715b}
+.btn{border:0;border-radius:14px;padding:10px 14px;font-weight:700}.primary{background:var(--sage);color:white}.soft{background:white;color:var(--medium);border:1px solid var(--line)}.blue{background:var(--light-blue);color:#526f7c}.danger{background:#fff0ed;color:#9a574f}
+main{max-width:1280px;margin:auto;padding:20px 20px 70px}
+.tabs{display:flex;gap:8px;overflow:auto;margin-bottom:18px;padding-bottom:4px}.tab{white-space:nowrap;border:1px solid var(--line);background:white;border-radius:999px;padding:10px 15px;font-weight:700;color:var(--medium)}.tab.active{background:var(--dark);color:white}
+.panel{display:none}.panel.active{display:block}
+.notice{border:1px solid #dfd5ca;background:var(--cream);border-radius:18px;padding:13px 15px;margin-bottom:14px;font-size:13px;color:var(--medium);line-height:1.6}
+.hero{border:1px solid var(--line);border-radius:28px;padding:25px;background:linear-gradient(135deg,var(--cream),var(--light-sage));display:grid;grid-template-columns:1.45fr .7fr;gap:16px;box-shadow:var(--shadow)}
+.hero h2{font-size:30px;margin:8px 0}.hero p{color:var(--medium);line-height:1.7;margin:0}.chip{display:inline-flex;padding:6px 10px;border-radius:999px;background:var(--light-pink);font-size:12px;font-weight:700;color:#805a52}
+.crocbox{background:white;border-radius:22px;padding:18px;display:flex;align-items:center;gap:13px}.croc{font-size:56px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin:17px 0}.stat{background:white;border:1px solid var(--line);border-radius:20px;padding:17px;box-shadow:var(--shadow)}.num{font-weight:700;font-size:30px}.muted{font-size:13px;color:var(--gray)}
+.section{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:26px 0 13px}.section h3{margin:0;font-size:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.info,.card{background:white;border:1px solid var(--line);border-radius:20px;padding:17px}.info b{display:block;margin-bottom:6px}
+.toolbar{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:14px}.field{border:1px solid var(--line);background:white;border-radius:14px;padding:11px 13px;outline:none;min-width:170px}.field:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(154,174,155,.16)}.grow{flex:1;min-width:230px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.card{box-shadow:var(--shadow);position:relative;overflow:hidden}.card:after{content:"";position:absolute;width:90px;height:90px;border-radius:50%;right:-32px;top:-35px;background:var(--cream)}.card h4{font-size:20px;margin:13px 0 7px;position:relative;z-index:1}.card p{font-size:14px;color:var(--medium);line-height:1.65;min-height:46px}.badges,.tags,.card-actions{display:flex;gap:6px;flex-wrap:wrap}.badge,.tag{padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700}.badge{background:var(--light-sage);color:#5b745d}.badge.alt{background:var(--light-blue);color:#567789}.tag{background:var(--cream);color:var(--medium);border-radius:9px;font-weight:400}.card-actions{margin-top:13px}.mini{border:0;border-radius:10px;background:var(--cream);padding:8px 10px;color:var(--medium);font-weight:700}
+.comparebox{background:white;border:1px solid var(--line);border-radius:20px;padding:16px}.compare-controls{display:grid;grid-template-columns:1fr 1fr auto;gap:9px}.tablewrap{overflow:auto;margin-top:14px}.ctable{width:100%;min-width:750px;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:white}.ctable td,.ctable th{padding:14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.ctable th{background:var(--cream)}.ctable tr:last-child td{border-bottom:0}.ctable td:last-child,.ctable th:last-child{border-right:0}
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.step{border:1px solid var(--line);background:white;border-radius:19px;padding:15px}.step .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--light-sage);font-weight:700}.step h4{margin:10px 0 6px}.step p{font-size:13px;color:var(--medium);line-height:1.6;margin:0}
+.empty{text-align:center;padding:50px;border:2px dashed var(--line);border-radius:20px;background:white;color:var(--gray)}
+.modal{position:fixed;inset:0;z-index:100;background:rgba(55,53,47,.34);display:none;place-items:center;padding:17px}.modal.open{display:grid}.modalbox{width:min(760px,100%);max-height:92vh;overflow:auto;background:white;border-radius:25px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.2)}.modalhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.modalhead h3{margin:0}.close{border:0;background:var(--cream);border-radius:50%;width:38px;height:38px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.group{display:flex;flex-direction:column;gap:6px}.full{grid-column:1/-1}.group label{font-size:13px;font-weight:700;color:var(--medium)}textarea.field{min-height:90px;resize:vertical}.formactions{display:flex;justify-content:flex-end;gap:8px;margin-top:17px}
+.loginbox{max-width:430px}.loginbox .field{width:100%}.loginbox .group{margin-bottom:11px}.login-help{font-size:12px;color:var(--gray);line-height:1.6}
+.setup{background:#fff8eb;border:1px solid #ead7ad;color:#735e33}.code{white-space:pre-wrap;background:#2f2f2c;color:#f8f5ee;border-radius:15px;padding:14px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;overflow:auto;max-height:320px}
+.toast{position:fixed;right:18px;bottom:18px;z-index:200;background:var(--dark);color:white;padding:11px 15px;border-radius:13px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:none}
+.admin-only{display:none}body.is-admin .admin-only{display:inline-flex}.admin-block{display:none}body.is-admin .admin-block{display:block}
+@media(max-width:900px){.hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.grid3{grid-template-columns:1fr}.flow{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.top{align-items:flex-start;padding:11px 12px}.brand p{display:none}.actions .backup{display:none}main{padding:14px 12px 55px}.hero{padding:18px}.hero h2{font-size:24px}.cards{grid-template-columns:1fr}.compare-controls{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.stats{gap:9px}.stat{padding:13px}.num{font-size:24px}}
+</style>
+</head>
+<body>
+<header><div class="top">
+ <div class="brand"><div class="logo">🐊</div><div><h1>母子鱷魚｜門市新人教學中心</h1><p>主管維護一次，全門市共用同一份教材</p></div></div>
+ <div class="actions">
+   <span id="roleBadge" class="role" style="display:none"></span>
+   <button id="loginBtn" class="btn soft" onclick="openLogin()">主管登入</button>
+   <button id="logoutBtn" class="btn soft admin-only" onclick="logout()">登出</button>
+   <button class="btn soft backup admin-only" onclick="exportData()">匯出備份</button>
+   <button class="btn blue admin-only" onclick="openImport()">Excel 批量匯入</button>
+   <button class="btn primary admin-only" onclick="openForm()">＋ 新增鞋款</button>
+ </div>
+</div></header>
+<main>
+ <div id="setupNotice" class="notice setup" style="display:none">
+   <b>⚙️ 尚未連接雲端資料庫：</b>目前會顯示示範資料。正式共用前，請依下方「首次設定」把 Supabase 專案網址與 Publishable/Anon Key 填進本 HTML。
+ </div>
+
+ <div class="tabs">
+   <button class="tab active" data-tab="dashboard">🏠 首頁</button>
+   <button class="tab" data-tab="library">鞋款資料庫</button>
+   <button class="tab" data-tab="compare">比較圖</button>
+   <button class="tab" data-tab="flow">銷售流程</button>
+    <button class="tab" data-tab="basics">基本須知</button>
+    <button class="tab" data-tab="complaints">客訴流程</button>
+    <button class="tab" data-tab="returns">退換貨流程</button>
+ </div>
+
+ <section id="dashboard" class="panel active">
+  <div class="hero" style="display:block;padding:0;overflow:hidden;background:transparent;border:0">
+  <img src="images/crocodile.png" alt="銷售 SOP：熱情接待、需求了解、推薦試穿、比較說明、成交與關懷" style="display:block;width:100%;height:auto;border-radius:28px">
+ </div>
+ 
+<div style="margin:22px 0 8px">
+ <div class="section"><div><h3>🐊 新人學習地圖</h3><div class="muted">不知道從哪開始？照著 ① → ⑥ 學就可以！</div></div></div>
+ <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-top:12px">
+  <button class="btn soft" onclick="document.querySelector('[data-tab=basics]').click()" style="min-height:92px;display:block;text-align:left"><b>① 基本須知</b><br><span class="muted">先熟悉門市規範</span></button>
+  <button class="btn soft" onclick="document.querySelector('[data-tab=library]').click()" style="min-height:92px;display:block;text-align:left"><b>② 認識鞋款</b><br><span class="muted">型號、分類、特色</span></button>
+  <button class="btn soft" onclick="document.querySelector('[data-tab=compare]').click()" style="min-height:92px;display:block;text-align:left"><b>③ 學會比較</b><br><span class="muted">相似鞋款怎麼選</span></button>
+  <button class="btn soft" onclick="document.querySelector('[data-tab=flow]').click()" style="min-height:92px;display:block;text-align:left"><b>④ 銷售流程</b><br><span class="muted">看 → 問 → 推 → 試 → 成</span></button>
+  <button class="btn soft" onclick="document.querySelector('[data-tab=returns]').click()" style="min-height:92px;display:block;text-align:left"><b>⑤ 退換貨</b><br><span class="muted">先判斷再處理</span></button>
+  <button class="btn soft" onclick="document.querySelector('[data-tab=complaints]').click()" style="min-height:92px;display:block;text-align:left"><b>⑥ 客訴處理</b><br><span class="muted">冷靜聽、記錄、回報</span></button>
+ </div>
+</div>
+
+<div class="stats"><div class="stat"><div id="sTotal" class="num">0</div><div class="muted">鞋款資料</div></div><div class="stat"><div id="sCat" class="num">0</div><div class="muted">鞋款分類</div></div><div class="stat"><div id="sKey" class="num">0</div><div class="muted">特色關鍵字</div></div><div class="stat"><div class="num">5</div><div class="muted">標準銷售步驟</div></div></div>
+  <div class="section"><h3>新人使用方式</h3></div>
+  <div class="grid3"><div class="info"><b>① 認識鞋款</b><span class="muted">先知道不同鞋款用途與特色。</span></div><div class="info"><b>② 學會比較</b><span class="muted">客人猶豫時，用差異而不是「都很好穿」。</span></div><div class="info"><b>③ 照流程銷售</b><span class="muted">問用途 → 看腳型 → 2–3 款 → 比較 → 收斂成交。</span></div></div>
+ </section>
+
+ <section id="library" class="panel">
+  <div class="section"><div><h3>鞋款資料庫</h3><div class="muted">員工可搜尋查看；主管登入後可維護內容。</div></div><div class="actions"><button class="btn blue admin-only" onclick="openImport()">Excel 批量匯入</button><button class="btn primary admin-only" onclick="openForm()">＋ 新增鞋款</button></div></div>
+  <div class="toolbar"><input id="search" class="field grow" placeholder="搜尋型號、名稱、特色、客群…" oninput="renderLibrary()"><select id="catFilter" class="field" onchange="renderLibrary()"><option value="">全部分類</option></select></div>
+  <div id="cards" class="cards"></div>
+ </section>
+
+ <section id="compare" class="panel">
+  <div class="section"><div><h3>鞋款比較圖</h3><div class="muted">任何人都能使用比較功能，不會改動資料。</div></div></div>
+  <div class="comparebox"><div class="compare-controls"><select id="cmpA" class="field" onchange="renderCompare()"></select><select id="cmpB" class="field" onchange="renderCompare()"></select><button class="btn blue" onclick="autoPair()">✨ 自動找相似款</button></div></div>
+  <div id="compareOut" class="tablewrap"></div>
+ </section>
+
+ <section id="flow" class="panel">
+  <div class="section"><div><h3>銷售流程</h3><div class="muted">看 → 問 → 推 → 試 → 成｜點選步驟，只看現在需要的重點。</div></div></div>
+  <style>
+   .sales-step-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:14px 0}
+   .sales-step-tab{border:1px solid var(--line);background:white;border-radius:18px;padding:14px 8px;font-weight:800;color:var(--medium)}
+   .sales-step-tab.active{background:var(--dark);color:white;border-color:var(--dark)}
+   .sales-detail{background:white;border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:var(--shadow)}
+   .sales-detail h4{font-size:23px;margin:0 0 7px} .sales-detail ul{margin:12px 0;padding-left:22px;line-height:1.9;color:var(--medium)}
+   .talkbox{margin-top:14px;background:var(--cream);border-radius:16px;padding:13px 15px;line-height:1.7}
+   .poster-toggle{margin-top:16px;text-align:center}
+   #salesPosterWrap{display:none;margin-top:14px}
+   @media(max-width:620px){.sales-step-tabs{grid-template-columns:repeat(5,minmax(70px,1fr));overflow:auto}.sales-step-tab{padding:11px 5px;font-size:13px}}
+  </style>
+  <div class="sales-step-tabs">
+   <button class="sales-step-tab active" onclick="showSalesStep(0,this)">👀<br>01 看</button>
+   <button class="sales-step-tab" onclick="showSalesStep(1,this)">💬<br>02 問</button>
+   <button class="sales-step-tab" onclick="showSalesStep(2,this)">👟<br>03 推</button>
+   <button class="sales-step-tab" onclick="showSalesStep(3,this)">✨<br>04 試</button>
+   <button class="sales-step-tab" onclick="showSalesStep(4,this)">🛍️<br>05 成</button>
+  </div>
+  <div id="salesDetail" class="sales-detail"></div>
+  <div class="poster-toggle"><button class="btn soft" onclick="toggleSalesPoster()">🖼️ 查看／收起完整銷售流程圖</button></div>
+  <div id="salesPosterWrap"><img id="salesFlowPoster" src="images/sales-flow.png" alt="母子鱷魚銷售五步驟"
+      onclick="openPoster()"
+      style="display:block;width:100%;height:auto;border-radius:22px;cursor:zoom-in;box-shadow:0 10px 30px rgba(0,0,0,.06)"><div class="muted" style="text-align:center;margin-top:10px">手機可點圖片放大查看話術與細節</div></div>
+  <script>
+   const salesSteps=[
+    {title:'01 看｜觀察客人的需求',sub:'先觀察，再開口。',items:['先觀察客人目前穿著的鞋款：若是我們品牌，可以詢問穿著體驗；若不是我們品牌，可以問「之前有聽說過我們品牌，或有穿過嗎？」','觀察客人靠近商品時，主動打招呼、建立信任感。','先看看是否需要尺寸、款式比較，再主動詢問。','避免一開始直接問「要買鞋嗎？」或「需要什麼嗎？」'],talk:'都可以試穿唷～可以幫你拿尺寸唷！',followup:'客人：「沒關係，我先看看。」<br><b>可以這樣接：</b>「好的～有需要的話可以再叫我唷！可以幫你介紹跟拿尺寸唷 😊」'},
+    {title:'02 問｜了解用途與需求',sub:'用開放式問題，讓客人自己說出需求。',items:['先了解用途、場合、尺寸與習慣。','可以問：平常日常穿還是運動使用？','穿著時間長嗎？需要走很多或久站嗎？','比較在意舒適、輕量、止滑，還是足弓支撐？'],talk:'這雙主要是平常穿，還是運動、工作使用呢？'},
+    {title:'03 推｜推薦適合的商品',sub:'不要一次給太多選擇。',items:['依照剛剛問到的需求推薦鞋款。','一次推薦 1～2 款最適合的商品。','說明「為什麼這雙適合他」，例如止滑、支撐、寬楦、輕量等。','相似款可直接說明差異，幫助客人縮小選擇。'],talk:'這雙會比較符合您的需求，因為它……（說明最重要的差異）。'},
+    {title:'04 試｜鼓勵實際試穿',sub:'讓客人自己感受到差異。',items:['主動鼓勵客人實際試穿。','試穿時觀察尺寸、舒適度、穩定性與行走感受。','不要只背商品資料，搭配客人的實際感受介紹。','需要時拿相似款比較，讓差異更明顯。'],talk:'這雙您可以實際走走看，感受一下尺寸跟腳底的支撐。'},
+    {title:'05 成｜協助客人做出選擇',sub:'把選擇收斂，完成購買。',items:['協助客人從試穿商品中選出最適合的一雙。','客人猶豫時，再整理兩款的優點與適合情境。','可以從舒適度、用途、搭配等角度幫助客人決定。','完成購買後，提供必要的穿著與保養提醒。'],talk:'如果以您剛剛說的需求，我會比較建議這一雙。'},
+   ];
+   function showSalesStep(i,btn){document.querySelectorAll('.sales-step-tab').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');const x=salesSteps[i];document.getElementById('salesDetail').innerHTML=`<h4>${x.title}</h4><div class="muted">${x.sub}</div><ul>${x.items.map(v=>`<li>${v}</li>`).join('')}</ul><div class="talkbox"><b>💬 建議話術</b><br>${x.talk}${x.followup?`<div style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);line-height:1.75"><b>↳ 客人常見回覆</b><br>${x.followup}</div>`:''}</div>`;}
+   function toggleSalesPoster(){const x=document.getElementById('salesPosterWrap');x.style.display=x.style.display==='block'?'none':'block';}
+   setTimeout(()=>showSalesStep(0,document.querySelector('.sales-step-tab')),0);
+  </script>
+ </section>
+
+
+<section id="basics" class="panel">
+  <style>
+    #basics .basic-hero{background:linear-gradient(135deg,#f7eee6,#e8f0e8);border:1px solid var(--line);border-radius:28px;padding:24px;display:flex;justify-content:space-between;gap:18px;align-items:center;box-shadow:var(--shadow);margin-bottom:18px}
+    #basics .basic-hero h2{margin:6px 0;font-size:27px} #basics .basic-hero p{margin:0;color:var(--medium);line-height:1.7}
+    #basics .basic-mascot{font-size:62px;background:#fff;border-radius:22px;padding:15px 20px;box-shadow:0 8px 24px rgba(0,0,0,.05)}
+    #basics .basic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+    #basics .basic-card{background:#fff;border:1px solid var(--line);border-radius:21px;padding:17px;box-shadow:var(--shadow);cursor:pointer;transition:.18s;position:relative;overflow:hidden}
+    #basics .basic-card:hover{transform:translateY(-2px);border-color:#cfd9cf} #basics .basic-card .ico{font-size:30px}
+    #basics .basic-card h4{margin:9px 0 5px;font-size:17px} #basics .basic-card .hint{font-size:12px;color:var(--gray)}
+    #basics .basic-card .detail{display:none;margin-top:13px;padding-top:13px;border-top:1px dashed var(--line);font-size:13px;line-height:1.8;color:var(--medium)}
+    #basics .basic-card.open .detail{display:block} #basics .basic-card.open{background:#fffdfb}
+    #basics .pill{display:inline-block;background:var(--light-sage);color:#58705b;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700;margin:2px}
+    #basics .warn{background:#fff6e8;border:1px solid #edd6aa;border-radius:14px;padding:10px 12px;margin-top:9px;color:#745c2f}
+    #basics .shiftbox{margin-top:18px;background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
+    #basics .shift-tabs{display:flex;gap:8px;margin:12px 0}.shift-btn{border:1px solid var(--line);background:var(--cream);padding:9px 14px;border-radius:999px;font-weight:700}.shift-btn.on{background:var(--dark);color:#fff}
+    #basics .shift-content{display:none!important}#basics .shift-content.on{display:block!important}.checkrow{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px solid #f1ece6}.checkrow:last-child{border:0}.checkdot{width:28px;height:28px;border-radius:50%;background:var(--light-sage);display:grid;place-items:center;flex:0 0 28px;font-weight:800;color:#59715b}
+    #basics .foursteps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.foursteps div{background:var(--cream);border-radius:13px;padding:10px;text-align:center;font-weight:700;font-size:12px}
+    @media(max-width:900px){#basics .basic-grid{grid-template-columns:repeat(2,1fr)}} @media(max-width:620px){#basics .basic-grid{grid-template-columns:1fr}#basics .basic-hero{align-items:flex-start}#basics .basic-mascot{font-size:40px}.foursteps{grid-template-columns:1fr 1fr}}
+  </style>
+  <div class="basic-hero"><div><span class="chip">新人上班生存指南</span><h2>基本須知，不用死背 👀</h2><p>先記住最常用的規則，遇到狀況再點卡片快速查。<br><b>不確定的折扣、帳務、特殊狀況 → 先問副店。</b></p></div><div class="basic-mascot">🐊👟</div></div>
+  <div class="basic-grid">
+    <div class="basic-card" onclick="this.classList.toggle('open')"><div class="ico">🕐</div><h4>今天幾點上班？</h4><div class="hint">點我看各店班別 ▾</div><div class="detail"><b>公館一店</b>｜營業 11:30–22:30<br>早 11:30–20:30 ・ 晚 13:30–22:30<br><br><b>西門店</b>｜營業 12:00–22:30<br>早 12:00–21:00 ・ 晚 13:30–22:30<br><br><b>新莊店</b>｜12:00–21:00<div class="warn">⏳ 早班 17:30 前休息完；晚班 18:30 前休息完。休息 60 分鐘。</div></div></div>
+    <div class="basic-card" onclick="this.classList.toggle('open')"><div class="ico">⏰</div><h4>一天要打幾次卡？</h4><div class="hint">答案不是 2 次，是 4 次！ ▾</div><div class="detail"><div class="foursteps"><div>① 上班</div><div>② 休息開始</div><div>③ 休息結束</div><div>④ 下班</div></div><div class="warn">⚠️ 遲到請自行通報群組；臨時請假優先找人換班。</div><br>每個月指休時間由 <b>Ariel 提前在群組告知繳交期限</b>；假別、調班單請在請假當天提出。</div></div>
+    <div class="basic-card" onclick="this.classList.toggle('open')"><div class="ico">👕</div><h4>上班穿什麼？</h4><div class="hint">服儀＋一人顧店安全 ▾</div><div class="detail"><span class="pill">制服</span><span class="pill">店內鞋款</span><br><br>店內只有一人，要上廁所或暫時離開：<br><b>🔑 帶走錢櫃鑰匙 ＋ 🔒 鎖定電腦</b></div></div>
+    <div class="basic-card" onclick="this.classList.toggle('open')"><div class="ico">💚</div><h4>員購有多便宜？</h4><div class="hint">員工／親友優惠 ▾</div><div class="detail"><b style="font-size:20px">員工價 8 折</b>｜每月限 1 雙<br><b style="font-size:20px">親友價 88 折</b>｜每月限 3 雙<br><br>可掛自己的業績；<b>務必先結清再拿鞋</b>。員購結帳後提供 Ariel 交易序號。</div></div>
+    <div class="basic-card" onclick="this.classList.toggle('open')"><div class="ico">🏷️</div><h4>現場折扣怎麼處理？</h4><div class="hint">依狀況＋權限處理 ▾</div><div class="detail">
+<div style="display:grid;gap:9px;margin-bottom:16px">
+<div style="padding:11px 13px;border-radius:14px;background:var(--cream)"><b>👟 一般店員｜95 折・上限 $50</b><br><span class="muted">超過權限 → 詢問副店</span></div>
+<div style="padding:11px 13px;border-radius:14px;background:var(--light-sage)"><b>🌿 副店｜9 折・上限 $100</b><br><span class="muted">超過權限 → 詢問 Ariel</span></div>
+<div style="padding:11px 13px;border-radius:14px;background:var(--light-blue)"><b>⭐ 經理｜8 折・上限 $200</b><br><span class="muted">超過權限 → 詢問凱西</span></div>
+</div>
+<b style="font-size:17px">💡 哪些情況可以使用折扣？</b><br>
+<span class="muted">以下情況，一般店員即可依自己的折扣權限處理：</span><br><br>
+① <b>售前發現商品有小瑕疵</b><br><span class="muted">例如輕微髒污、小刮痕等，客人可以接受商品現況。</span><br><br>
+② <b>售後客人反映鞋款有問題，需要重新購買</b><br><span class="muted">可依情況提供小額折扣。</span><br><br>
+③ <b>鄰居價</b><br><span class="muted">門市附近店家可依規定提供優惠，備註須寫明是哪一間店家。</span><br><br>
+④ <b>其他門市會員活動</b><br><span class="muted">例如 $50、生日 9 折等，可接受同等優惠；需加入我們的會員，並將折扣通知拍照回傳群組＋附交易序號。</span>
+<div class="warn">⚠️ <b>重點是「你可以折到多少」</b>。符合折扣情況時，可在自己的權限內處理；超過自己的折扣權限，再往上詢問。除了門市活動、Google 評論折扣外，其他折扣事後須回報群組，註明交易序號與折扣內容。</div></div></div>
+    <div class="basic-card" onclick="this.classList.toggle('open')"><div class="ico">💳</div><h4>結帳最怕漏什麼？</h4><div class="hint">5 個結帳防呆重點 ▾</div><div class="detail">☑ 登入自己的「人員」帳號<br>☑ 折扣備註原因<br>☑ LINE Pay 後台確認交易<br>☑ 確認發票有正常開立<br>☑ 作廢發票／信用卡簽單留存</div></div>
+    <div class="basic-card" onclick="this.classList.toggle('open')"><div class="ico">🧹</div><h4>沒客人要幹嘛？</h4><div class="hint">不是坐著等客人喔 ▾</div><div class="detail">✨ 清潔架上鞋款（標籤／鞋底／灰塵）<br>👟 更換架上鞋、調整陳列<br>📦 整理庫存鞋盒<br>🔢 定期盤點庫存<br>💬 回報客人常問問題／成交原因<br>📝 當天完成事項回填工作日誌</div></div>
+    <div class="basic-card" onclick="this.classList.toggle('open')"><div class="ico">🚨</div><h4>遇到特殊狀況？</h4><div class="hint">先做這件事 ▾</div><div class="detail"><b style="font-size:19px">先留紀錄，再問副店。</b><br><br>折扣超權限、帳務異常、客人要求特殊處理、商品爭議，都不要先自行承諾。<div class="warn">📸 能拍照就拍照、能留交易序號就留交易序號，方便後續確認。</div></div></div>
+    <div class="basic-card" onclick="this.classList.toggle('open')"><div class="ico">📅</div><h4>臨時請假怎麼辦？</h4><div class="hint">換班優先 ▾</div><div class="detail">① 優先找好代理人／換班<br>② 通知副店<br>③ 當天提出假別或調班申請<br><br>早、晚班也要互相確認搭班夥伴是否正常出席。</div></div>
+  </div>
+  <div class="shiftbox"><div class="section" style="margin:0"><div><h3>🌞🌙 今天是哪個班？</h3><div class="muted">切換班別，只看自己現在需要做的事。</div></div></div><div class="shift-tabs"><button type="button" class="shift-btn on" data-shift="early">🌞 早班開店</button><button type="button" class="shift-btn" data-shift="late">🌙 晚班閉店</button></div>
+    <div id="basicEarly" class="shift-content on"><div class="checkrow"><div class="checkdot">1</div><div><b>提早 5–10 分鐘開店</b><br></div></div><div class="checkrow"><div class="checkdot">2</div><div><b>零用金確認 $5,000</b><br><span class="muted">統計 → 錢櫃 → 進行盤點 → 輸入 $5,000。</span></div></div><div class="checkrow"><div class="checkdot">3</div><div><b>檢查 LINE@ 新訊息</b></div></div><div class="checkrow"><div class="checkdot">4</div><div><b>開店清潔</b><br><span class="muted">掃拖地、鏡子、玻璃、椅子、開電視；騎樓有垃圾也要清。</span></div></div><div class="checkrow"><div class="checkdot">5</div><div><b>檢查信箱</b></div></div></div>
+    <div id="basicLate" class="shift-content"><div class="checkrow"><div class="checkdot">1</div><div><b>約 22:00 無客人可先點收現金</b></div></div><div class="checkrow"><div class="checkdot">2</div><div><b>清潔收尾</b><br><span class="muted">掃拖地、廁所、垃圾。</span></div></div><div class="checkrow"><div class="checkdot">3</div><div><b>核對今日帳務</b><br><span class="muted">交易統計、實收現金、LINE Pay 後台金額。</span></div></div><div class="checkrow"><div class="checkdot">4</div><div><b>信用卡機記得結帳</b></div></div><div class="checkrow"><div class="checkdot">5</div><div><b>現金當日 23:59 前匯款</b><br><span class="muted">備註日期，不要跨夜。</span></div></div><div class="checkrow"><div class="checkdot">6</div><div><b>工作日誌 PO 群組＋鐵門關到底</b></div></div></div>
+  </div>
+  <script>document.addEventListener('click',function(e){const btn=e.target.closest('#basics .shift-btn');if(!btn)return;const type=btn.dataset.shift;document.querySelectorAll('#basics .shift-btn').forEach(x=>x.classList.remove('on'));btn.classList.add('on');const early=document.getElementById('basicEarly');const late=document.getElementById('basicLate');if(early)early.classList.toggle('on',type==='early');if(late)late.classList.toggle('on',type==='late');});</script>
+</section>
+
+
+<section id="complaints" class="panel">
+  <div class="hero" style="grid-template-columns:1fr;margin-bottom:16px">
+    <div>
+      <span class="chip">🗣️ 門市應對</span>
+      <h2>客訴處理流程</h2>
+      <p>先了解、再確認，不急著承諾退換。依照 5 個步驟把資訊整理完整，再確認後續處理方式。</p>
+    </div>
+  </div>
+
+  <div class="complaint-tabs" style="display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-bottom:14px">
+    <button class="step complaint-step active" onclick="showComplaintStep(1,this)"><div class="n">01</div><h4>👂 聽</h4><p>了解問題</p></button>
+    <button class="step complaint-step" onclick="showComplaintStep(2,this)"><div class="n">02</div><h4>🔍 查</h4><p>確認紀錄</p></button>
+    <button class="step complaint-step" onclick="showComplaintStep(3,this)"><div class="n">03</div><h4>👟 看</h4><p>確認鞋況</p></button>
+    <button class="step complaint-step" onclick="showComplaintStep(4,this)"><div class="n">04</div><h4>📣 報</h4><p>回報確認</p></button>
+    <button class="step complaint-step" onclick="showComplaintStep(5,this)"><div class="n">05</div><h4>✅ 處理</h4><p>依結果處理</p></button>
+  </div>
+
+  <div class="comparebox">
+    <div id="complaintStep1" class="complaint-content">
+      <h3 style="margin-top:0">👂 01｜先聽</h3>
+      <p style="line-height:1.8;color:var(--medium)">先了解客人遇到什麼問題，讓客人把狀況說明完整。<b>不要急著答應退貨、換貨或賠償。</b></p>
+      <div class="notice" style="margin:12px 0 0">可以先了解：鞋子是哪裡有問題？大約穿多久後開始出現？</div>
+    </div>
+
+    <div id="complaintStep2" class="complaint-content" style="display:none">
+      <h3 style="margin-top:0">🔍 02｜查購買紀錄</h3>
+      <div class="grid3" style="grid-template-columns:repeat(5,1fr)">
+        <div class="info"><b>① 購買日期</b><span class="muted">哪一天購買？</span></div>
+        <div class="info"><b>② 購買門市</b><span class="muted">哪一間門市？</span></div>
+        <div class="info"><b>③ 商品</b><span class="muted">哪一雙鞋？</span></div>
+        <div class="info"><b>④ 穿著狀態</b><span class="muted">是否已穿出門？</span></div>
+        <div class="info"><b>⑤ 發現時間</b><span class="muted">什麼時候發現？</span></div>
+      </div>
+      <div class="notice" style="margin-top:12px"><b>接著確認 POS／交易紀錄。</b></div>
+    </div>
+
+    <div id="complaintStep3" class="complaint-content" style="display:none">
+      <h3 style="margin-top:0">👟 03｜看鞋況</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px">
+        <button class="btn primary complaint-case-btn" onclick="showComplaintCase('with',this)">👟 客人有帶鞋</button>
+        <button class="btn soft complaint-case-btn" onclick="showComplaintCase('without',this)">📱 客人沒帶鞋</button>
+      </div>
+      <div id="complaintCaseWith" class="info" style="line-height:1.9">
+        <b>客人有帶鞋</b>
+        1. 查看實際鞋況<br>
+        2. 請客人加官方 LINE、留下聯絡資訊<br>
+        3. 鞋子用鞋盒裝好<br>
+        4. 黏便條紙註明客人資料／問題<br>
+        5. 詢問主管／業務確認後續如何處理
+      </div>
+      <div id="complaintCaseWithout" class="info" style="line-height:1.9;display:none">
+        <b>客人沒帶鞋</b>
+        1. 請客人加官方 LINE、留下聯絡資訊<br>
+        2. 請客人回去拍攝鞋子問題處<br>
+        3. 將照片傳至官方 LINE<br>
+        4. 收到照片後，再詢問主管／業務確認後續如何處理
+      </div>
+    </div>
+
+    <div id="complaintStep4" class="complaint-content" style="display:none">
+      <h3 style="margin-top:0">📣 04｜回報確認</h3>
+      <div class="notice" style="background:#fff8eb;border-color:#ead7ad">
+        <b>⚠️ 不要現場直接保證「一定可以換」或「一定是瑕疵」。</b><br>
+        先把購買紀錄、鞋況、客人反映內容整理好，再詢問後續處理方式。
+      </div>
+      <div class="info">
+        <b>💬 可以這樣回覆客人</b>
+        「我先幫您把商品狀況記錄下來，再幫您確認後續處理方式，有結果會再通知您。」
+      </div>
+    </div>
+
+    <div id="complaintStep5" class="complaint-content" style="display:none">
+      <h3 style="margin-top:0">✅ 05｜依確認結果處理</h3>
+      <div class="grid3">
+        <div class="info"><b>🔁 判定商品瑕疵</b><span class="muted">協助更換新品；舊鞋標記「瑕疵」，後續退回總公司。</span></div>
+        <div class="info"><b>🛠️ 判定可維修</b><span class="muted">留下客人 LINE；處理完成或配件到達後通知客人取件。</span></div>
+        <div class="info"><b>📌 其他狀況</b><span class="muted">依主管／業務確認結果回覆客人。</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section"><h3>⭐ 客訴 3 個不要</h3></div>
+  <div class="grid3">
+    <div class="info"><b>❌ 不要跟客人爭論</b><span class="muted">先聽完並確認客人反映的問題。</span></div>
+    <div class="info"><b>❌ 不要自己判定一定是瑕疵</b><span class="muted">先記錄鞋況，再確認處理方式。</span></div>
+    <div class="info"><b>❌ 不要直接承諾退換貨</b><span class="muted">確認後續處理方式後再正式回覆。</span></div>
+  </div>
+</section>
+
+<section id="returns" class="panel">
+  <div class="section">
+    <div><h3>退換貨流程</h3><div class="muted">先確認購買資訊與商品狀況，再依門市規範進行處理。</div></div>
+  </div>
+  <div class="empty" style="margin-top:14px">
+    <div style="font-size:42px">🔄</div>
+    <b>退換貨流程內容準備中</b>
+    <div class="muted">之後可以整理可換／不可換情況、檢查項目、處理步驟與常用說法。</div>
+  </div>
+</section>
+</main>
+
+<div id="loginModal" class="modal"><div class="modalbox loginbox">
+ <div class="modalhead"><h3>🐊 主管登入</h3><button class="close" onclick="closeLogin()">✕</button></div>
+ <div class="group"><label>Email</label><input id="loginEmail" type="email" class="field" placeholder="主管 Email"></div>
+ <div class="group"><label>密碼</label><input id="loginPassword" type="password" class="field" placeholder="密碼" onkeydown="if(event.key==='Enter')login()"></div>
+ <div class="login-help">員工不需要登入。如果這個 Email 沒有被資料庫權限列為管理員，即使成功登入也無法新增或修改資料。</div>
+ <div class="formactions"><button class="btn soft" onclick="closeLogin()">取消</button><button class="btn primary" onclick="login()">登入</button></div>
+</div></div>
+
+<div id="formModal" class="modal"><div class="modalbox">
+ <div class="modalhead"><h3 id="formTitle">新增鞋款</h3><button class="close" onclick="closeForm()">✕</button></div>
+ <div class="formgrid">
+  <div class="group"><label>商品型號 *</label><input id="fModel" class="field" placeholder="例：BAL5617" autocapitalize="characters"></div>
+  <div class="group"><label>鞋款名稱 *</label><input id="fName" class="field" placeholder="例：碳板跑鞋"></div>
+  <div class="group"><label>分類 *</label><input id="fCategory" class="field" placeholder="例：跑鞋"></div>
+  <div class="group"><label>適合客群</label><input id="fAudience" class="field" placeholder="例：需要推進感、喜歡跑步"></div>
+  <div class="group full"><label>鞋款特色 *</label><textarea id="fFeatures" class="field" placeholder="逗號或頓號分隔：回彈、推進、輕量"></textarea></div>
+  <div class="group full"><label>銷售重點</label><textarea id="fSelling" class="field" placeholder="給新人看的推薦說法"></textarea></div>
+  <div class="group full"><label>差異／注意事項</label><textarea id="fNotes" class="field"></textarea></div>
+ </div>
+ <div class="formactions"><button class="btn soft" onclick="closeForm()">取消</button><button class="btn primary" onclick="saveForm()">儲存</button></div>
+</div></div>
+
+
+<div id="importModal" class="modal"><div class="modalbox">
+ <div class="modalhead"><h3>Excel 批量匯入鞋款</h3><button class="close" onclick="closeImport()">✕</button></div>
+ <div class="notice">
+  選擇門市「商品列表」Excel。系統會優先讀取 <b>商品統計</b> 工作表，依「商品編號」去除尺寸／顏色重複；相同型號已存在時會更新名稱，不會重複新增。
+ </div>
+ <div class="group">
+  <label>選擇 Excel 檔案</label>
+  <input id="excelFile" class="field" type="file" accept=".xlsx,.xls">
+ </div>
+ <div id="importSummary" class="notice" style="display:none;margin-top:13px"></div>
+ <div id="importPreview" class="tablewrap"></div>
+ <div class="formactions">
+   <button class="btn soft" onclick="closeImport()">取消</button>
+   <button id="importBtn" class="btn primary" onclick="importExcel()" disabled>確認匯入</button>
+ </div>
+</div></div>
+
+
+<div id="posterZoom" onclick="closePoster()" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(25,25,25,.92);padding:18px;overflow:auto;cursor:zoom-out">
+  <button onclick="closePoster();event.stopPropagation()" style="position:fixed;right:18px;top:18px;z-index:10000;border:0;border-radius:999px;width:46px;height:46px;font-size:24px;background:white;cursor:pointer">×</button>
+  <img src="images/sales-flow.png" alt="母子鱷魚銷售五步驟放大圖" style="display:block;max-width:none;width:max(100%,1200px);height:auto;margin:45px auto 20px;border-radius:18px">
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+// ===== 正式上線前，將以下兩行換成你的 Supabase 資料 =====
+const SUPABASE_URL = 'https://gntdsiohoktlzfcckpyr.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_1karUF3Rx8T84RU9woYWZQ_BFCMSYev';
+// =======================================================
+
+const configured = SUPABASE_URL.startsWith('https://') && !SUPABASE_URL.includes('YOUR_') && !SUPABASE_KEY.includes('YOUR_');
+const sb = configured ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {auth:{persistSession:true,autoRefreshToken:true}}) : null;
+let data = [];
+let editingId = null;
+let isAdmin = false;
+
+const demo = [
+ {id:'d1',name:'Y 字拖',category:'拖鞋',use_case:'日常',audience:'快速穿脫、夏天日常穿著',features:['輕便','快速穿脫','透氣'],selling:'主打方便、輕鬆與日常實穿。',notes:'與一般拖鞋相比，腳趾夾帶設計固定感較直接。'},
+ {id:'d2',name:'一般拖鞋',category:'拖鞋',use_case:'日常',audience:'居家、外出、怕夾腳趾',features:['好穿脫','舒適','休閒'],selling:'不喜歡 Y 字夾腳，可先從一般拖鞋推薦。',notes:'重點比較鞋面包覆與腳床軟硬。'},
+ {id:'d3',name:'阻滑拖鞋',category:'機能拖鞋',use_case:'雨天',audience:'重視濕滑環境抓地',features:['止滑','抓地','穩定','耐磨'],selling:'主打抓地與穩定感。',notes:'避免說成「完全不會滑」。'},
+ {id:'d4',name:'洞洞鞋',category:'休閒鞋',use_case:'日常',audience:'喜歡方便、透氣與休閒風格',features:['透氣','包覆','好穿脫'],selling:'介於拖鞋與包鞋之間，方便又有包覆。',notes:'可比較後帶、包覆感與底厚。'},
+ {id:'d5',name:'碳板鞋',category:'跑鞋',use_case:'跑步',audience:'跑步、喜歡推進感',features:['碳板','推進','回彈','穩定'],selling:'把推進感、回彈與使用情境講清楚。',notes:'不一定適合每個人日常久站。'},
+ {id:'d6',name:'湧泉穴鞋',category:'機能鞋',use_case:'走路',audience:'重視足底踩踏感與走路舒適',features:['足底感受','舒適','走路','支撐'],selling:'聚焦足底踩踏感與日常走路體驗。',notes:'避免醫療療效話術。'}
+];
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function switchTab(id){document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===id));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===id));if(id==='compare')renderCompareSelectors()}
+document.querySelectorAll('.tab').forEach(x=>x.onclick=()=>switchTab(x.dataset.tab));
+
+async function init(){
+ document.getElementById('setupNotice').style.display=configured?'none':'block';
+ if(!configured){data=demo;refresh();return}
+ // 先讀取鞋款資料，不讓登入狀態檢查卡住整個資料庫畫面
+ await loadCloud();
+ // 登入狀態獨立處理：即使 Auth 暫時延遲，員工仍可正常看到鞋款
+ sb.auth.getSession().then(({data:{session}})=>{
+   setAdmin(session?.user?.email === 'apple8401203@gmail.com');
+ }).catch(err=>console.warn('Auth session check failed:',err));
+ sb.auth.onAuthStateChange((_event,session)=>setAdmin(session?.user?.email === 'apple8401203@gmail.com'));
+}
+function setAdmin(v){
+ isAdmin=v;document.body.classList.toggle('is-admin',v);
+ document.getElementById('roleBadge').textContent=v?'🔐 主管編輯模式':'';
+ document.getElementById('roleBadge').classList.toggle('admin',v);
+ document.getElementById('roleBadge').style.display=v?'inline-flex':'none';
+ document.getElementById('loginBtn').style.display=v?'none':'inline-flex';
+}
+async function loadCloud(){
+ try{
+   const {data:rows,error}=await sb.from('shoe_training').select('*').order('model_no',{ascending:true});
+   if(error) throw error;
+   data=(rows||[]).sort((a,b)=>String(a.model_no||'').localeCompare(String(b.model_no||''), undefined, {numeric:true,sensitivity:'base'}));
+   refresh();
+ }catch(error){
+   console.error('shoe_training load failed:',error);
+   toast('鞋款資料讀取失敗，請重新整理頁面');
+ }
+}
+function refresh(){renderStats();renderFilters();renderLibrary();renderCompareSelectors()}
+function renderStats(){sTotal.textContent=data.length;sCat.textContent=new Set(data.map(x=>x.category)).size;sKey.textContent=new Set(data.flatMap(x=>x.features||[])).size}
+function renderFilters(){
+ const val=catFilter.value;const cats=[...new Set(data.map(x=>x.category).filter(Boolean))].sort();
+ catFilter.innerHTML='<option value="">全部分類</option>'+cats.map(x=>`<option>${esc(x)}</option>`).join('');catFilter.value=val;
+}
+function renderLibrary(){
+ const q=search.value.trim().toLowerCase(),cat=catFilter.value;
+ const rows=data.filter(x=>{const hay=[x.model_no,x.name,x.category,x.audience,x.selling,x.notes,(x.features||[]).join(' ')].join(' ').toLowerCase();return(!q||hay.includes(q))&&(!cat||x.category===cat)}).sort((a,b)=>String(a.model_no||'').localeCompare(String(b.model_no||''), undefined, {numeric:true,sensitivity:'base'}));
+ if(!rows.length){cards.innerHTML='<div class="empty" style="grid-column:1/-1">找不到符合條件的鞋款 🐊</div>';return}
+ cards.innerHTML=rows.map(x=>`<article class="card"><div class="badges"><span class="badge">${esc(x.category)}</span></div><div style="font-weight:900;font-size:14px;letter-spacing:.5px;margin:10px 0 2px">${esc(x.model_no||'未填型號')}</div><h4>${esc(x.name)}</h4><p>${esc(x.selling||x.audience||'尚未填寫銷售重點')}</p><div class="tags">${(x.features||[]).map(f=>`<span class="tag"># ${esc(f)}</span>`).join('')}</div><div class="muted" style="margin-top:9px">適合：${esc(x.audience||'—')}</div><div class="card-actions"><button class="mini" onclick="compareWith('${x.id}')">拿去比較</button>${isAdmin?`<button class="mini" onclick="editItem('${x.id}')">編輯</button><button class="mini" onclick="deleteItem('${x.id}')">刪除</button>`:''}</div></article>`).join('');
+}
+function renderCompareSelectors(){
+ const a=cmpA.value,b=cmpB.value,opts=data.map(x=>`<option value="${x.id}">${esc(x.model_no||'—')}｜${esc(x.name)}｜${esc(x.category)}</option>`).join('');
+ cmpA.innerHTML=opts;cmpB.innerHTML=opts;if(data.length){cmpA.value=data.some(x=>x.id===a)?a:data[0].id;cmpB.value=data.some(x=>x.id===b)?b:(data[1]?.id||data[0].id)}renderCompare()
+}
+function renderCompare(){
+ const A=data.find(x=>x.id===cmpA.value),B=data.find(x=>x.id===cmpB.value);
+ if(!A||!B){compareOut.innerHTML='<div class="empty">目前沒有足夠資料。</div>';return}
+ const tags=x=>(x||[]).map(v=>`<span class="tag">${esc(v)}</span>`).join(' ')||'—';
+ compareOut.innerHTML=`<table class="ctable"><tr><th>比較項目</th><th>🐊 ${esc(A.name)}</th><th>🐊 ${esc(B.name)}</th></tr><tr><td><b>商品型號</b></td><td><b>${esc(A.model_no||'—')}</b></td><td><b>${esc(B.model_no||'—')}</b></td></tr><tr><td><b>分類</b></td><td>${esc(A.category)}</td><td>${esc(B.category)}</td></tr><tr><td><b>鞋款特色</b></td><td>${tags(A.features)}</td><td>${tags(B.features)}</td></tr><tr><td><b>適合客群</b></td><td>${esc(A.audience||'—')}</td><td>${esc(B.audience||'—')}</td></tr><tr><td><b>銷售重點</b></td><td>${esc(A.selling||'—')}</td><td>${esc(B.selling||'—')}</td></tr><tr><td><b>差異／注意</b></td><td>${esc(A.notes||'—')}</td><td>${esc(B.notes||'—')}</td></tr></table>`;
+}
+function autoPair(){
+ if(data.length<2){toast('至少需要兩款鞋');return}const base=data.find(x=>x.id===cmpA.value)||data[0];
+ const score=x=>{let s=0;if(x.category===base.category)s+=5;const f=new Set(base.features||[]);(x.features||[]).forEach(v=>{if(f.has(v))s+=2});return s};
+ const arr=data.filter(x=>x.id!==base.id).sort((a,b)=>score(b)-score(a));cmpB.value=arr[0].id;renderCompare();toast('已找到最相近款式');
+}
+function compareWith(id){switchTab('compare');setTimeout(()=>{cmpA.value=id;autoPair()},0)}
+function openLogin(){if(!configured){switchTab('setup');toast('請先完成 Supabase 設定');return}loginModal.classList.add('open')}
+function closeLogin(){loginModal.classList.remove('open')}
+async function login(){
+ const email=loginEmail.value.trim(),password=loginPassword.value;
+ if(!email||!password){toast('請輸入 Email 與密碼');return}
+ const {error}=await sb.auth.signInWithPassword({email,password});
+ if(error){toast('登入失敗：請檢查帳號密碼');return}
+ closeLogin();await loadCloud();toast('已進入主管模式');
+}
+async function logout(){await sb.auth.signOut();await loadCloud();toast('已登出，現在是唯讀模式')}
+function openForm(){
+ if(!isAdmin)return;editingId=null;formTitle.textContent='新增鞋款';
+ ['fModel','fName','fCategory','fAudience','fFeatures','fSelling','fNotes'].forEach(id=>document.getElementById(id).value='');formModal.classList.add('open')
+}
+function closeForm(){formModal.classList.remove('open')}
+function editItem(id){
+ if(!isAdmin)return;const x=data.find(v=>v.id===id);if(!x)return;editingId=id;formTitle.textContent='編輯鞋款';
+ fModel.value=x.model_no||'';fName.value=x.name||'';fCategory.value=x.category||'';fAudience.value=x.audience||'';fFeatures.value=(x.features||[]).join('、');fSelling.value=x.selling||'';fNotes.value=x.notes||'';formModal.classList.add('open')
+}
+function parseFeatures(s){return[...new Set(s.split(/[、,，\n]/).map(x=>x.trim()).filter(Boolean))]}
+async function saveForm(){
+ if(!isAdmin)return;const item={model_no:fModel.value.trim().toUpperCase(),name:fName.value.trim(),category:fCategory.value.trim(),audience:fAudience.value.trim(),features:parseFeatures(fFeatures.value),selling:fSelling.value.trim(),notes:fNotes.value.trim(),updated_at:new Date().toISOString()};
+ if(!item.model_no||!item.name||!item.category||!item.features.length){toast('請填商品型號、名稱、分類與鞋款特色');return}
+ let error;
+ if(editingId)({error}=await sb.from('shoe_training').update(item).eq('id',editingId));else({error}=await sb.from('shoe_training').insert(item));
+ if(error){console.error(error);toast('儲存失敗：目前帳號沒有編輯權限');return}
+ closeForm();await loadCloud();toast('已同步更新，全門市可看到');
+}
+async function deleteItem(id){
+ if(!isAdmin)return;const x=data.find(v=>v.id===id);if(!x||!confirm(`確定刪除「${x.name}」嗎？`))return;
+ const {error}=await sb.from('shoe_training').delete().eq('id',id);if(error){toast('刪除失敗：沒有權限');return}await loadCloud();toast('已刪除')
+}
+
+let pendingImport = [];
+
+function cleanProductName(name=''){
+ return String(name).replace(/^【[^】]+】/,'').replace(/\([^)]*\)\s*$/,'').trim();
+}
+function inferInfo(name=''){
+ const n=String(name);
+ let category='其他鞋款',use_case='日常',features=['待補充'];
+ if(/Y拖|Y字|夾腳/.test(n)){category='Y字拖';features=['輕便','好穿脫'];}
+ else if(/拖鞋|時尚拖|彈力拖|碳板拖|運動拖/.test(n)){category=/阻滑/.test(n)?'阻滑拖鞋':'一般拖鞋';features=/碳板/.test(n)?['碳板','推進','回彈']:['舒適','好穿脫'];}
+ else if(/洞洞/.test(n)){category='洞洞鞋';features=['透氣','好穿脫','包覆'];}
+ else if(/雨鞋|防水/.test(n) && !/登山|運動鞋/.test(n)){category='雨鞋';use_case='雨天';features=['防水','雨天'];}
+ else if(/登山/.test(n)){category='登山鞋';use_case='戶外';features=['抓地','穩定','戶外'];}
+ else if(/跑鞋|碳板/.test(n)){category='跑鞋';use_case='跑步';features=['回彈','推進','穩定'];}
+ else if(/運動鞋|阻滑鞋/.test(n)){category=/阻滑/.test(n)?'阻滑鞋':'運動鞋';use_case=/阻滑/.test(n)?'工作':'走路';features=/阻滑/.test(n)?['阻滑','抓地','穩定']:['舒適','支撐'];}
+ else if(/涼鞋/.test(n)){category='涼鞋';features=['透氣','休閒'];}
+ if(/防水/.test(n) && !features.includes('防水'))features.push('防水');
+ if(/4E|寬楦|寬版/.test(n))features.push('寬楦');
+ return {category,use_case,features:[...new Set(features)]};
+}
+function openImport(){
+ if(!isAdmin)return;
+ pendingImport=[];excelFile.value='';importSummary.style.display='none';importPreview.innerHTML='';importBtn.disabled=true;
+ importModal.classList.add('open');
+}
+function closeImport(){importModal.classList.remove('open')}
+excelFile.addEventListener('change',async e=>{
+ const file=e.target.files?.[0]; if(!file)return;
+ try{
+  const buf=await file.arrayBuffer(),wb=XLSX.read(buf,{type:'array'});
+  const sheetName=wb.SheetNames.includes('商品統計')?'商品統計':wb.SheetNames[0];
+  const rows=XLSX.utils.sheet_to_json(wb.Sheets[sheetName],{defval:''});
+  const map=new Map();
+  rows.forEach(r=>{
+   const model=String(r['商品編號']||r['商品型號']||r['型號']||'').trim().toUpperCase();
+   const rawName=String(r['商品名稱']||r['品名']||'').trim();
+   if(!model||!rawName)return;
+   const name=cleanProductName(rawName),info=inferInfo(name);
+   map.set(model,{model_no:model,name,category:info.category,use_case:info.use_case,audience:'',features:info.features,selling:'',notes:'',updated_at:new Date().toISOString()});
+  });
+  pendingImport=[...map.values()];
+  importSummary.style.display='block';
+  importSummary.innerHTML=`已讀取 <b>${pendingImport.length}</b> 個不重複商品型號。先顯示前 20 筆預覽；分類與特色為系統初步判斷，之後可逐款編輯。`;
+  importPreview.innerHTML=`<table class="ctable"><tr><th>商品型號</th><th>商品名稱</th><th>初步分類</th><th>特色</th></tr>${pendingImport.slice(0,20).map(x=>`<tr><td><b>${esc(x.model_no)}</b></td><td>${esc(x.name)}</td><td>${esc(x.category)}</td><td>${x.features.map(esc).join('、')}</td></tr>`).join('')}</table>`;
+  importBtn.disabled=!pendingImport.length;
+ }catch(err){console.error(err);toast('Excel 讀取失敗，請確認檔案格式')}
+});
+async function importExcel(){
+ if(!isAdmin||!pendingImport.length)return;
+ importBtn.disabled=true;importBtn.textContent='匯入中…';
+ try{
+  const {data:existing,error:readErr}=await sb.from('shoe_training').select('id,model_no');
+  if(readErr)throw readErr;
+  const byModel=new Map((existing||[]).filter(x=>x.model_no).map(x=>[String(x.model_no).toUpperCase(),x.id]));
+  let added=0,updated=0;
+  for(const item of pendingImport){
+   const id=byModel.get(item.model_no);
+   let error;
+   if(id){
+    const patch={name:item.name,updated_at:item.updated_at};
+    ({error}=await sb.from('shoe_training').update(patch).eq('id',id)); updated++;
+   }else{
+    ({error}=await sb.from('shoe_training').insert(item)); added++;
+   }
+   if(error)throw error;
+  }
+  closeImport();await loadCloud();toast(`匯入完成：新增 ${added}、更新 ${updated}`);
+ }catch(err){
+  console.error(err);toast('匯入失敗，請稍後再試');
+ }finally{
+  importBtn.disabled=false;importBtn.textContent='確認匯入';
+ }
+}
+
+function openPoster(){
+ document.getElementById('posterZoom').style.display='block';
+ document.body.style.overflow='hidden';
+}
+function closePoster(){
+ document.getElementById('posterZoom').style.display='none';
+ document.body.style.overflow='';
+}
+function exportData(){
+ if(!isAdmin)return;const blob=new Blob([JSON.stringify({version:2,exportedAt:new Date().toISOString(),items:data},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='母子鱷魚_新人教學_雲端備份.json';a.click();URL.revokeObjectURL(a.href)
+}
+init();
+</script>
+
+<script>
+function showComplaintStep(n, btn){
+  document.querySelectorAll('.complaint-content').forEach(el => el.style.display='none');
+  const target=document.getElementById('complaintStep'+n);
+  if(target) target.style.display='block';
+  document.querySelectorAll('.complaint-step').forEach(el => {
+    el.classList.remove('active');
+    el.style.background='white';
+    el.style.color='var(--dark)';
+  });
+  if(btn){
+    btn.classList.add('active');
+    btn.style.background='var(--dark)';
+    btn.style.color='white';
+  }
+}
+function showComplaintCase(type, btn){
+  const withBox=document.getElementById('complaintCaseWith');
+  const withoutBox=document.getElementById('complaintCaseWithout');
+  if(withBox) withBox.style.display=type==='with'?'block':'none';
+  if(withoutBox) withoutBox.style.display=type==='without'?'block':'none';
+  document.querySelectorAll('.complaint-case-btn').forEach(el=>{
+    el.classList.remove('primary'); el.classList.add('soft');
+  });
+  if(btn){ btn.classList.remove('soft'); btn.classList.add('primary'); }
+}
+</script>
+<style>
+.complaint-step{cursor:pointer;text-align:left;color:var(--dark)}
+.complaint-step.active{background:var(--dark);color:white}
+@media(max-width:700px){
+  .complaint-tabs{grid-template-columns:repeat(2,1fr)!important}
+  #complaintStep2 .grid3{grid-template-columns:1fr!important}
+}
+</style>
+
+</body>
+</html>
