@@ -39,7 +39,6 @@ main{max-width:1280px;margin:auto;padding:20px 20px 70px}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.card{box-shadow:var(--shadow);position:relative;overflow:hidden}.card:after{content:"";position:absolute;width:90px;height:90px;border-radius:50%;right:-32px;top:-35px;background:var(--cream)}.card h4{font-size:20px;margin:13px 0 7px;position:relative;z-index:1}.card p{font-size:14px;color:var(--medium);line-height:1.65;min-height:46px}.badges,.tags,.card-actions{display:flex;gap:6px;flex-wrap:wrap}.badge,.tag{padding:5px 9px;border-radius:999px;font-size:12px;font-weight:700}.badge{background:var(--light-sage);color:#5b745d}.badge.alt{background:var(--light-blue);color:#567789}.tag{background:var(--cream);color:var(--medium);border-radius:9px;font-weight:400}.card-actions{margin-top:13px}.mini{border:0;border-radius:10px;background:var(--cream);padding:8px 10px;color:var(--medium);font-weight:700}
 .comparebox{background:white;border:1px solid var(--line);border-radius:20px;padding:16px}.compare-controls{display:grid;grid-template-columns:1fr 1fr auto;gap:9px}.tablewrap{overflow:auto;margin-top:14px}.ctable{width:100%;min-width:750px;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:white}.ctable td,.ctable th{padding:14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.ctable th{background:var(--cream)}.ctable tr:last-child td{border-bottom:0}.ctable td:last-child,.ctable th:last-child{border-right:0}
 .flow{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.step{border:1px solid var(--line);background:white;border-radius:19px;padding:15px}.step .n{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--light-sage);font-weight:700}.step h4{margin:10px 0 6px}.step p{font-size:13px;color:var(--medium);line-height:1.6;margin:0}
-#complaints .complaint-step.active{background:var(--light-sage)!important;color:var(--dark)!important;border-color:var(--sage)!important}#complaints .complaint-step.active h4,#complaints .complaint-step.active p{color:var(--dark)!important}#complaints .complaint-step.active .n{background:#fff!important;color:#59715b!important}
 .empty{text-align:center;padding:50px;border:2px dashed var(--line);border-radius:20px;background:white;color:var(--gray)}
 .modal{position:fixed;inset:0;z-index:100;background:rgba(55,53,47,.34);display:none;place-items:center;padding:17px}.modal.open{display:grid}.modalbox{width:min(760px,100%);max-height:92vh;overflow:auto;background:white;border-radius:25px;padding:22px;box-shadow:0 20px 60px rgba(0,0,0,.2)}.modalhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.modalhead h3{margin:0}.close{border:0;background:var(--cream);border-radius:50%;width:38px;height:38px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.group{display:flex;flex-direction:column;gap:6px}.full{grid-column:1/-1}.group label{font-size:13px;font-weight:700;color:var(--medium)}textarea.field{min-height:90px;resize:vertical}.formactions{display:flex;justify-content:flex-end;gap:8px;margin-top:17px}
 .loginbox{max-width:430px}.loginbox .field{width:100%}.loginbox .group{margin-bottom:11px}.login-help{font-size:12px;color:var(--gray);line-height:1.6}
@@ -397,7 +396,7 @@ function setAdmin(v){
 }
 async function loadCloud(){
  try{
-   const {data:rows,error}=await sb.from('shoe_training').select('*').order('model_no',{ascending:true});
+   const {data:rows,error}=await sb.from('shoe_training').select('*');
    if(error) throw error;
    data=(rows||[]).sort((a,b)=>String(a.model_no||'').localeCompare(String(b.model_no||''), undefined, {numeric:true,sensitivity:'base'}));
    refresh();
@@ -567,8 +566,8 @@ function showComplaintStep(n, btn){
   });
   if(btn){
     btn.classList.add('active');
-    btn.style.background='var(--dark)';
-    btn.style.color='white';
+    btn.style.background='var(--light-sage)';
+    btn.style.color='var(--dark)';
   }
 }
 function showComplaintCase(type, btn){
@@ -584,7 +583,7 @@ function showComplaintCase(type, btn){
 </script>
 <style>
 .complaint-step{cursor:pointer;text-align:left;color:var(--dark)}
-.complaint-step.active{background:var(--dark);color:white}
+.complaint-step.active{background:var(--light-sage);color:var(--dark);border-color:var(--sage)}
 @media(max-width:700px){
   .complaint-tabs{grid-template-columns:repeat(2,1fr)!important}
   #complaintStep2 .grid3{grid-template-columns:1fr!important}
