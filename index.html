@@ -396,7 +396,7 @@ function setAdmin(v){
 }
 async function loadCloud(){
  try{
-   const {data:rows,error}=await sb.from('shoe_training').select('*').order('model_no',{ascending:true});
+   const {data:rows,error}=await sb.from('shoe_training').select('*');
    if(error) throw error;
    data=(rows||[]).sort((a,b)=>String(a.model_no||'').localeCompare(String(b.model_no||''), undefined, {numeric:true,sensitivity:'base'}));
    refresh();
